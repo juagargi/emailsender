@@ -109,14 +109,15 @@ func Send(conf *Config, mail *Email) error {
 		return errors.New("Cancelled by user")
 	}
 
-	recipientBuckets := make([][]string, (len(mail.To)-1)/50+1)
+	const chunkSize = 49
+	recipientBuckets := make([][]string, (len(mail.To)-1)/chunkSize+1)
 	row := 0
 	for ; row < len(recipientBuckets)-1; row++ {
-		end := (row + 1) * 50
-		recipientBuckets[row] = mail.To[row*50 : end]
+		end := (row + 1) * chunkSize
+		recipientBuckets[row] = mail.To[row*chunkSize : end]
 	}
-	end := row*50 + (len(mail.To) % 50) + 1
-	recipientBuckets[row] = mail.To[row*50 : end]
+	end := row*chunkSize + (len(mail.To) % chunkSize) + 1
+	recipientBuckets[row] = mail.To[row*chunkSize : end]
 
 	allRecipients := []string{}
 	for _, bucket := range recipientBuckets {
@@ -130,10 +131,9 @@ func Send(conf *Config, mail *Email) error {
 		return errors.New("Cancelled by user")
 	}
 
-	fmt.Println("Sending email ...")
-	client := postmark.NewClient(conf.pm_server_token, conf.pm_account_token)
-
-	for _, bucket := range recipientBuckets {
+	for bucketIndex, bucket := range recipientBuckets {
+		fmt.Printf("Sending chunk %d / %d ... %s\n", bucketIndex+1, len(recipientBuckets), strings.Join(bucket, ","))
+		client := postmark.NewClient(conf.pm_server_token, conf.pm_account_token)
 		email := postmark.Email{
 			From:       mail.From,
 			To:         mail.From,
