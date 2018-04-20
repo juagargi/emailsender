@@ -108,9 +108,22 @@ func Send(conf *Config, mail *Email) error {
 	if !askForConfirmation("y") {
 		return errors.New("Cancelled by user")
 	}
-	allRecipients := strings.Join(mail.To, ",")
+
+	recipientBuckets := make([][]string, (len(mail.To)-1)/50+1)
+	row := 0
+	for ; row < len(recipientBuckets)-1; row++ {
+		end := (row + 1) * 50
+		recipientBuckets[row] = mail.To[row*50 : end]
+	}
+	end := row*50 + (len(mail.To) % 50) + 1
+	recipientBuckets[row] = mail.To[row*50 : end]
+
+	allRecipients := []string{}
+	for _, bucket := range recipientBuckets {
+		allRecipients = append(allRecipients, strings.Join(bucket, ","))
+	}
 	fmt.Println("---------------------------")
-	fmt.Println("To:\n", allRecipients)
+	fmt.Printf("To: %s\n", strings.Join(allRecipients, "\n"))
 	fmt.Println("---------------------------")
 	fmt.Print("Continue? (y/n) ")
 	if !askForConfirmation("y") {
@@ -119,19 +132,22 @@ func Send(conf *Config, mail *Email) error {
 
 	fmt.Println("Sending email ...")
 	client := postmark.NewClient(conf.pm_server_token, conf.pm_account_token)
-	email := postmark.Email{
-		From:       mail.From,
-		To:         mail.From,
-		Bcc:        allRecipients,
-		Subject:    mail.Subject,
-		TextBody:   mail.Body,
-		Tag:        mail.Tag,
-		TrackOpens: true,
-	}
-	_, err := client.SendEmail(email)
-	if err != nil {
-		fmt.Println("Failed to send email")
-		return err
+
+	for _, bucket := range recipientBuckets {
+		email := postmark.Email{
+			From:       mail.From,
+			To:         mail.From,
+			Bcc:        strings.Join(bucket, ","),
+			Subject:    mail.Subject,
+			TextBody:   mail.Body,
+			Tag:        mail.Tag,
+			TrackOpens: true,
+		}
+		_, err := client.SendEmail(email)
+		if err != nil {
+			fmt.Println("Failed to send email")
+			return err
+		}
 	}
 	fmt.Println("Email sent")
 	return nil
