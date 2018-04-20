@@ -77,7 +77,9 @@ func loadEmail() Email {
 		if len(scanner.Text()) > 0 && scanner.Text()[0] == '#' {
 			continue
 		}
-		recipients = append(recipients, scanner.Text())
+		address := scanner.Text()
+		address = strings.Trim(address, " \"'<>")
+		recipients = append(recipients, address)
 	}
 
 	return Email{
