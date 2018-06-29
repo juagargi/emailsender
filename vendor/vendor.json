@@ -1,0 +1,25 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "zgHK1vxUJDZTXAPCw+Bls7St0Ks=",
+			"path": "github.com/astaxie/beego/config",
+			"revision": "f16688817aa428d10361394015b40d096b680542",
+			"revisionTime": "2017-12-18T11:18:59Z"
+		},
+		{
+			"checksumSHA1": "x8EMONM0Wq3tTZMaW9RjBI50CLg=",
+			"path": "github.com/keighl/postmark",
+			"revision": "f7544123de4af45ccbb4e1a0f286cb45adb11bb7",
+			"revisionTime": "2017-06-05T11:53:17Z"
+		},
+		{
+			"checksumSHA1": "KhKh2c5RxvoKEKzlAjyxC7HDzUA=",
+			"path": "github.com/sec51/goconf",
+			"revision": "f3f7b14f2c1eb207145f31f05f53d53baf8f5c96",
+			"revisionTime": "2018-04-15T12:30:49Z"
+		}
+	],
+	"rootPath": "github.com/juagargi/emailsender"
+}
