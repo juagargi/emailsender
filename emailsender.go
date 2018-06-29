@@ -116,7 +116,7 @@ func Send(conf *Config, mail *Email) error {
 		end := (row + 1) * chunkSize
 		recipientBuckets[row] = mail.To[row*chunkSize : end]
 	}
-	end := row*chunkSize + (len(mail.To) % chunkSize) + 1
+	end := len(mail.To) - 1
 	recipientBuckets[row] = mail.To[row*chunkSize : end]
 
 	allRecipients := []string{}
