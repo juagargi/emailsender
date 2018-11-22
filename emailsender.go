@@ -12,6 +12,9 @@ import (
 	"github.com/sec51/goconf"
 )
 
+const chunkSize = 49
+const fromAddress = "no-reply@scionlab.org"
+
 type Config struct {
 	pm_server_token  string
 	pm_account_token string
@@ -79,14 +82,16 @@ func loadEmail() Email {
 		}
 		address := scanner.Text()
 		address = strings.Trim(address, " \"'<>")
-		recipients = append(recipients, address)
+		if address != "" {
+			recipients = append(recipients, address)
+		}
 	}
 
 	return Email{
 		Subject: subject,
 		Body:    body,
 		Tag:     "scionlab-announcement",
-		From:    "no-reply@scionlab.org",
+		From:    fromAddress,
 		To:      recipients,
 	}
 }
@@ -108,15 +113,13 @@ func Send(conf *Config, mail *Email) error {
 	if !askForConfirmation("y") {
 		return errors.New("Cancelled by user")
 	}
-
-	const chunkSize = 49
 	recipientBuckets := make([][]string, (len(mail.To)-1)/chunkSize+1)
 	row := 0
 	for ; row < len(recipientBuckets)-1; row++ {
 		end := (row + 1) * chunkSize
 		recipientBuckets[row] = mail.To[row*chunkSize : end]
 	}
-	end := len(mail.To) - 1
+	end := len(mail.To)
 	recipientBuckets[row] = mail.To[row*chunkSize : end]
 
 	allRecipients := []string{}
