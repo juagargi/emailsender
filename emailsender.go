@@ -183,7 +183,8 @@ func main() {
 	subjectFlag := flag.String("subject", "", "Subject")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %[1]s:\n\n%[1]s (no arguments) (will read email.txt and recipients.txt)\n"+
-			"%[1]s -to someone@somewhere.some -subject 'A subject' \n\t(email body will be read from Stdin):\n", os.Args[0])
+			"%[1]s -to someone@somewhere.some -subject 'A subject' \n"+
+			"\t(email body will be read from Stdin)(if stdout is not terminal, it will NOT ask for confirmation):\n", os.Args[0])
 		flag.PrintDefaults()
 	}
 	flag.Parse()
