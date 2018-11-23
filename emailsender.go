@@ -182,7 +182,8 @@ func main() {
 	toFlag := flag.String("to", "", "Recipients email addresses separated with ;")
 	subjectFlag := flag.String("subject", "", "Subject")
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage of %s (if one email parameter specified, email body will be read from Stdin):\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage of %[1]s:\n\n%[1]s (no arguments) (will read email.txt and recipients.txt)\n"+
+			"%[1]s -to someone@somewhere.some -subject 'A subject' \n\t(email body will be read from Stdin):\n", os.Args[0])
 		flag.PrintDefaults()
 	}
 	flag.Parse()
