@@ -124,11 +124,11 @@ func askForConfirmation(thisMeansYes string, interactive bool) bool {
 }
 
 // Send connects to the PostMark email API and sends the email
-func Send(conf *Config, mail *Email, interactive bool) error {
+func Send(conf *Config, mail *Email, confirm bool, interactive bool) error {
 	fmt.Println("---------------------------")
 	fmt.Printf("From: %s\nSubject: %s\nBody:\n%s\n", mail.From, mail.Subject, mail.Body)
 	fmt.Println("---------------------------")
-	if interactive {
+	if !confirm && interactive {
 		// ask for confirmation
 		fmt.Print("Continue? (y/n) ")
 		if !askForConfirmation("y", interactive) {
@@ -151,9 +151,11 @@ func Send(conf *Config, mail *Email, interactive bool) error {
 	fmt.Println("---------------------------")
 	fmt.Printf("To: %s\n", strings.Join(allRecipients, "\n"))
 	fmt.Println("---------------------------")
-	fmt.Print("Continue? (y/n) ")
-	if !askForConfirmation("y", interactive) {
-		return errors.New("Cancelled by user")
+	if !confirm {
+		fmt.Print("Continue? (y/n) ")
+		if !askForConfirmation("y", interactive) {
+			return errors.New("Cancelled by user")
+		}
 	}
 	for bucketIndex, bucket := range recipientBuckets {
 		fmt.Printf("Sending chunk %d / %d ... %s\n", bucketIndex+1, len(recipientBuckets), strings.Join(bucket, ","))
@@ -181,6 +183,7 @@ func main() {
 	var email Email
 	toFlag := flag.String("to", "", "Recipients email addresses separated with ;")
 	subjectFlag := flag.String("subject", "", "Subject")
+	confirmFlag := flag.Bool("force", false, "Do not ask for confirmation (always confirm)")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %[1]s:\n\n%[1]s (no arguments) (will read email.txt and recipients.txt)\n"+
 			"%[1]s -to someone@somewhere.some -subject 'A subject' \n"+
@@ -189,6 +192,10 @@ func main() {
 	}
 	flag.Parse()
 	conf := loadConf()
+	if conf.pm_account_token == "" || conf.pm_server_token == "" {
+		fmt.Println("Tokens seem empty. Be sure you have a development.conf file in your CWD")
+		os.Exit(1)
+	}
 	interactive := false
 	if *toFlag != "" || *subjectFlag != "" {
 		reader := bufio.NewReader(os.Stdin)
@@ -210,7 +217,7 @@ func main() {
 		email = loadEmail()
 		interactive = true
 	}
-	err := Send(&conf, &email, interactive)
+	err := Send(&conf, &email, *confirmFlag, interactive)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
