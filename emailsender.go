@@ -151,6 +151,7 @@ func Send(conf *Config, mail *Email, confirm bool, interactive bool) error {
 	fmt.Println("---------------------------")
 	fmt.Printf("To: %s\n", strings.Join(allRecipients, "\n"))
 	fmt.Println("---------------------------")
+	fmt.Printf("(%d buckets)\n", len(recipientBuckets))
 	if !confirm {
 		fmt.Print("Continue? (y/n) ")
 		if !askForConfirmation("y", interactive) {

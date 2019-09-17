@@ -19,6 +19,24 @@
 			"path": "github.com/sec51/goconf",
 			"revision": "f3f7b14f2c1eb207145f31f05f53d53baf8f5c96",
 			"revisionTime": "2018-04-15T12:30:49Z"
+		},
+		{
+			"checksumSHA1": "Zsm3tvgRFJOt3afwwhrGymcSZgg=",
+			"path": "golang.org/x/crypto/ssh/terminal",
+			"revision": "227b76d455e791cb042b03e633e2f7fbcfdf74a5",
+			"revisionTime": "2019-09-11T02:06:19Z"
+		},
+		{
+			"checksumSHA1": "MQO1W1y+qjp7TeYBMqf0AqsuKms=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "c3b328c6e5a763a2bfc82a48b4bd855037210934",
+			"revisionTime": "2019-09-13T12:12:07Z"
+		},
+		{
+			"checksumSHA1": "U4rR1I0MXcvJz3zSxTp3hb3Y0I0=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "c3b328c6e5a763a2bfc82a48b4bd855037210934",
+			"revisionTime": "2019-09-13T12:12:07Z"
 		}
 	],
 	"rootPath": "github.com/juagargi/emailsender"
